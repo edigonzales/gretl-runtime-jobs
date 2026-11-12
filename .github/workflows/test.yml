@@ -28,11 +28,14 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '22'
+      - uses: actions/checkout@v6
+        with:
+          repository: edigonzales/k8s-job-console
+          ref: 0eea467ae0522c775993cb48b652e6f7d2644209
+          path: k8s-job-console
       - name: Validate definitions
+        working-directory: k8s-job-console
         run: |
-          git clone https://github.com/edigonzales/k8s-job-console.git
-          cd k8s-job-console
-          if [[ ! -f package.json ]]; then git switch feature/mvp-k8s-job-console; fi
           npm ci
           npm run build
           npm run generate
