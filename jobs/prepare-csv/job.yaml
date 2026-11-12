@@ -1,0 +1,12 @@
+schemaVersion: 2
+id: prepare-csv
+name: CSV vorbereiten
+description: Prüft die Beispieldatei und erzeugt die laufbezogenen Prüfartefakte.
+runtime: gretl
+script: job.groovy
+exposed: false
+parameters:
+  - {name: inputFile, label: CSV-Datei, type: file, required: true, accept: [.csv]}
+outputs:
+  - {name: validated, label: Geprüfte CSV-Datei, path: validated.csv, parameter: validatedFile}
+  - {name: report, label: Prüfbericht, path: review.json, parameter: reportFile}

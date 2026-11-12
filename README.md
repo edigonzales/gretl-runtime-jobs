@@ -1,6 +1,6 @@
 # GRETL Runtime Jobs
 
-Drei ausführbare GRETL-6-Jobs für die Kubernetes Job Console. Jede Definition
+Ausführbare GRETL-6-Beispiele für die Kubernetes Job Console. Jede Definition
 liegt in `jobs/<id>/job.yaml` und verweist auf ein Groovy-Script im selben
 Verzeichnis. Die generische GRETL-Runtime führt das Script aus.
 
@@ -8,7 +8,8 @@ Verzeichnis. Die generische GRETL-Runtime führt das Script aus.
 | --- | --- | --- |
 | `hello-gretl` | Nachricht, Wiederholungen, Grossbuchstaben | Nachricht im Log |
 | `csv-analyzer` | UTF-8-CSV, Trennzeichen, Kopfzeile | JSON-Bericht mit Anzahl Datensätze und Spalten |
-| `scheduled-report` | Optionale Nachricht | Nachricht und UTC-Zeitpunkt im Log |
+| `scheduled-report` | Optionale Nachricht | UTC-Zeitpunkt und Indexmarkierung aus einem Folgejob |
+| `csv-publication` | Beispiel-CSV, Publikationshinweis bei Freigabe | Prüfbericht und publizierte Datei |
 
 Für einen weiteren Job kopiere eine passende Definition und vergebe eine
 eindeutige ID. `schemaVersion: 2`, `runtime: gretl` und `script: job.groovy`
@@ -25,6 +26,13 @@ Ein Zeitplan verwendet fünf Cron-Felder. Die Job Console löst `H`,
 `H(1-3)` und `H/15` in Minuten und Stunden stabil anhand der Job-ID auf.
 Geplante Jobs brauchen Vorgaben für alle Pflichtparameter. Dateiuploads sind
 manuellen Ausführungen vorbehalten. `Europe/Zurich` ist die Standardzeitzone.
+
+Der Ablauf `flows/csv-publication/flow.yaml` nutzt
+`testdata/publication.csv` mit der Kopfzeile `id,name`. Er speichert den
+Prüfbericht und die geprüfte Datei pro Ausführung. Die Publikation
+verwendet genau diese Datei und den vom Reviewer angegebenen Hinweis.
+`prepare-csv`, `publish-csv` und `update-index` sind interne Schritte.
+`scheduled-report` startet `update-index` nach Erfolg im selben Workflow.
 
 ```sh
 # Mit einer gebauten GRETL-Distribution im Schwesterverzeichnis

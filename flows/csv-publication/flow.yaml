@@ -1,0 +1,28 @@
+schemaVersion: 2
+id: csv-publication
+name: CSV prüfen und veröffentlichen
+description: Erstellt einen Prüfbericht und publiziert den geprüften Stand nach einer Freigabe.
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+  approve: {groups: [console-reviewers, console-admins]}
+  manage: {groups: [console-maintainers]}
+parameters:
+  - {name: inputFile, label: CSV-Datei, type: file, required: true, accept: [.csv]}
+execution: {serial: true, timeoutSeconds: 604800}
+steps:
+  - id: prepare
+    job: prepare-csv
+    inputs:
+      inputFile: {fromInput: inputFile}
+  - id: review
+    approval:
+      message: Prüfbericht prüfen und diesen CSV-Stand freigeben.
+      allowSelfApproval: false
+      fields:
+        - {name: publicationNote, label: Publikationshinweis, type: text, required: true}
+  - id: publish
+    job: publish-csv
+    inputs:
+      inputFile: {fromArtifact: {step: prepare, name: validated}}
+      publicationNote: {fromApproval: {step: review, field: publicationNote}}

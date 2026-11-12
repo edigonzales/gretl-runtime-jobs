@@ -13,3 +13,4 @@ parameters:
 schedule:
   cron: H H(1-3) * * *
   timeZone: Europe/Zurich
+onSuccess: {job: update-index}

@@ -1,0 +1,13 @@
+schemaVersion: 2
+id: publish-csv
+name: CSV veröffentlichen
+description: Erzeugt die Publikationsdateien aus dem freigegebenen Zwischenstand.
+runtime: gretl
+script: job.groovy
+exposed: false
+parameters:
+  - {name: inputFile, label: Geprüfte CSV, type: file, required: true, accept: [.csv]}
+  - {name: publicationNote, label: Publikationshinweis, type: text, required: true}
+outputs:
+  - {name: published, label: Publizierte CSV, path: published.csv, parameter: publishedFile}
+  - {name: manifest, label: Publikationshinweis, path: publication.json, parameter: manifestFile}

@@ -1,0 +1,9 @@
+schemaVersion: 2
+id: update-index
+name: Zeitbericht-Index aktualisieren
+description: Schreibt eine laufbezogene Markierung nach einem erfolgreichen Zeitbericht.
+runtime: gretl
+script: job.groovy
+exposed: false
+outputs:
+  - {name: index, label: Indexmarkierung, path: index.txt, parameter: indexFile}

@@ -29,4 +29,13 @@ expect_failure jobs/csv-analyzer/job.groovy --param "inputFile=$temp/invalid.csv
 grep -Eq 'Unclosed CSV quote' "$temp/run.log"
 run jobs/scheduled-report/job.groovy
 grep -Eq '[0-9]{4}-[0-9]{2}-[0-9]{2}T[^ ]+Z Zeitbericht gestartet' "$temp/run.log"
+run jobs/prepare-csv/job.groovy --param "inputFile=$PWD/testdata/publication.csv" \
+  --param "validatedFile=$temp/validated.csv" --param "reportFile=$temp/review.json"
+python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["records"] == 3' "$temp/review.json"
+run jobs/publish-csv/job.groovy --param "inputFile=$temp/validated.csv" --param 'publicationNote=Geprüft' \
+  --param "publishedFile=$temp/published.csv" --param "manifestFile=$temp/publication.json"
+cmp testdata/publication.csv "$temp/published.csv"
+python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["note"] == "Geprüft"' "$temp/publication.json"
+run jobs/update-index/job.groovy --param "indexFile=$temp/index.txt"
+test -s "$temp/index.txt"
 echo 'GRETL example jobs passed.'
