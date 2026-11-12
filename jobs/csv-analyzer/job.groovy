@@ -23,6 +23,10 @@ class CsvShape {
                 skipLF = false
                 if (c == 10) continue
             }
+            if (!recordStarted && (c == 10 || c == 13)) {
+                skipLF = c == 13
+                continue
+            }
             recordStarted = true
             if (quoted) {
                 if (c == 34) {

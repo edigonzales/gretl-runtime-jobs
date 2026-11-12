@@ -21,7 +21,7 @@ expect_failure jobs/hello-gretl/job.groovy
 rg -qi 'message' "$temp/run.log"
 run jobs/csv-analyzer/job.groovy --param "inputFile=$PWD/testdata/sample.csv"
 rg -q 'records=3 columns=2' "$temp/run.log"
-printf 'a;b\r\n"x;y";z\r\n' > "$temp/semicolon.csv"
+printf '\r\na;b\r\n\r\n"x;y";z\r\n\r\n' > "$temp/semicolon.csv"
 run jobs/csv-analyzer/job.groovy --param "inputFile=$temp/semicolon.csv" --param 'delimiter=;' --param hasHeader=false
 rg -q 'records=2 columns=2' "$temp/run.log"
 printf 'a,b\n"broken\n' > "$temp/invalid.csv"
