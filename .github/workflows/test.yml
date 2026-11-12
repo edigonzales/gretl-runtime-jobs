@@ -1,0 +1,38 @@
+name: GRETL examples
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: gretl-runtime-jobs
+      - uses: actions/checkout@v6
+        with:
+          repository: edigonzales/gretl-runtime
+          ref: 18eaf3254a16c121362b78406be7c01c95f152c7
+          path: gretl-runtime
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Build GRETL distribution
+        working-directory: gretl-runtime
+        run: ./mvnw -B -pl gretl-dist -am -DskipTests package
+      - name: Test example scripts
+        working-directory: gretl-runtime-jobs
+        run: ./scripts/test.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Validate definitions
+        run: |
+          git clone https://github.com/edigonzales/k8s-job-console.git
+          cd k8s-job-console
+          if [[ ! -f package.json ]]; then git switch feature/mvp-k8s-job-console; fi
+          npm ci
+          npm run build
+          npm run generate

@@ -1,0 +1,19 @@
+schemaVersion: 1
+id: csv-analyzer
+name: CSV analysieren
+description: Zählt Datensätze und Spalten in einer UTF-8-CSV-Datei.
+runtime: gretl
+script: job.groovy
+parameters:
+  - {name: inputFile, label: CSV-Datei, type: file, required: true, accept: [.csv]}
+  - name: delimiter
+    label: Trennzeichen
+    type: enum
+    required: true
+    default: ","
+    options:
+      - {value: ",", label: Komma}
+      - {value: ";", label: Semikolon}
+      - {value: "\t", label: Tabulator}
+  - {name: hasHeader, label: Erste Zeile enthält Spaltennamen, type: boolean, default: true}
+resources: {cpu: 250m, memory: 512Mi}

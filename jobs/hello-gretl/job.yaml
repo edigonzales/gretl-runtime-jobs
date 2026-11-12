@@ -1,0 +1,10 @@
+schemaVersion: 1
+id: hello-gretl
+name: Hello GRETL
+description: Gibt eine Nachricht mehrfach aus.
+runtime: gretl
+script: job.groovy
+parameters:
+  - {name: message, label: Nachricht, type: text, required: true}
+  - {name: count, label: Wiederholungen, type: integer, default: 1}
+  - {name: uppercase, label: Grossbuchstaben, type: boolean, default: false}

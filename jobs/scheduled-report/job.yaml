@@ -1,0 +1,11 @@
+schemaVersion: 1
+id: scheduled-report
+name: Zeitbericht
+description: Protokolliert eine Nachricht und den Ausführungszeitpunkt.
+runtime: gretl
+script: job.groovy
+parameters:
+  - {name: message, label: Nachricht, type: text, default: 'Zeitbericht gestartet'}
+schedule:
+  cron: H H(1-3) * * *
+  timeZone: Europe/Zurich
