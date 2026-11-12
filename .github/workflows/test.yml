@@ -31,11 +31,11 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: edigonzales/k8s-job-console
-          ref: 0eea467ae0522c775993cb48b652e6f7d2644209
+          ref: 81ef36f75078302b2af58cb3b8d54ae1aef32f42
           path: k8s-job-console
       - name: Validate definitions
         working-directory: k8s-job-console
         run: |
           npm ci
           npm run build
-          npm run generate
+          npm run generate -- --image job-console-gretl:ci
