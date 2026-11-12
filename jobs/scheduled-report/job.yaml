@@ -1,9 +1,13 @@
-schemaVersion: 1
+schemaVersion: 2
 id: scheduled-report
 name: Zeitbericht
 description: Protokolliert eine Nachricht und den Ausführungszeitpunkt.
 runtime: gretl
 script: job.groovy
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+  manage: {groups: [console-maintainers]}
 parameters:
   - {name: message, label: Nachricht, type: text, default: 'Zeitbericht gestartet'}
 schedule:

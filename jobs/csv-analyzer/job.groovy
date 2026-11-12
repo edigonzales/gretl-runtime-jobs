@@ -1,9 +1,11 @@
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import java.nio.file.Files
 
 parameter('inputFile', description: 'inputFile', type: 'path', required: true)
 parameter('delimiter', description: 'delimiter', defaultValue: ',')
 parameter('hasHeader', description: 'hasHeader', type: 'boolean', defaultValue: true)
+parameter('reportFile', description: 'reportFile', type: 'path')
 
 @CompileStatic
 class CsvShape {
@@ -80,6 +82,10 @@ action('analyze') {
     }
     long records = shape.rows - (parameter('hasHeader') ? 1 : 0)
     println "records=${records} columns=${shape.columns}"
+    def reportFile = parameter('reportFile')
+    if (reportFile != null) {
+        Files.writeString(reportFile, JsonOutput.toJson([records: records, columns: shape.columns]) + '\n')
+    }
 }
 
 defaults 'analyze'

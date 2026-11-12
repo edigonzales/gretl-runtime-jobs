@@ -1,9 +1,13 @@
-schemaVersion: 1
+schemaVersion: 2
 id: hello-gretl
 name: Hello GRETL
 description: Gibt eine Nachricht mehrfach aus.
 runtime: gretl
 script: job.groovy
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+  manage: {groups: [console-maintainers]}
 parameters:
   - {name: message, label: Nachricht, type: text, required: true}
   - {name: count, label: Wiederholungen, type: integer, default: 1}
