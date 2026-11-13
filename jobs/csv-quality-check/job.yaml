@@ -1,0 +1,28 @@
+schemaVersion: 2
+id: csv-quality-check
+name: Jahresdaten prüfen
+description: Prüft synthetische Gemeindedaten auf Schema, Schlüssel und plausible Werte.
+runtime: gretl
+script: job.groovy
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+parameters:
+  - {name: inputFile, label: CSV-Datei, type: file, required: true, accept: [.csv]}
+  - name: delimiter
+    label: Trennzeichen
+    type: enum
+    default: ","
+    options:
+      - {value: ",", label: Komma}
+      - {value: ";", label: Semikolon}
+  - {name: hasHeader, label: Kopfzeile, type: boolean, default: true}
+  - {name: expectedYear, label: Berichtsjahr, type: integer, default: 2025}
+  - {name: datasetName, label: Datenbestand, type: text, default: Gemeindedaten}
+  - {name: strictMode, label: Bei fehlerhaften Datensätzen abbrechen, type: boolean, default: false}
+  - {name: referenceDate, label: Stichtag, type: date, default: "2025-12-31"}
+  - {name: notes, label: Bemerkungen, type: multiline}
+outputs:
+  - {name: report, label: Qualitätsbericht, path: quality-report.json, parameter: reportFile}
+  - {name: validated, label: Gültige Zeilen, path: validated.csv, parameter: validatedFile}
+  - {name: invalid, label: Beanstandete Zeilen, path: invalid-records.csv, parameter: invalidFile, optional: true}

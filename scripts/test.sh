@@ -39,3 +39,37 @@ python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["note"] == "Gep
 run jobs/update-index/job.groovy --param "indexFile=$temp/index.txt"
 test -s "$temp/index.txt"
 echo 'GRETL example jobs passed.'
+
+run jobs/csv-quality-check/job.groovy --param "inputFile=$PWD/testdata/municipalities.csv" \
+  --param "reportFile=$temp/quality.json" --param "validatedFile=$temp/accepted.csv" --param "invalidFile=$temp/rejected.csv"
+python3 - "$temp/quality.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+assert (d['records'], d['blankValues'], d['duplicateKeys'], d['invalidRecords']) == (5, 1, 1, 3), d
+PY
+[[ $(wc -l < "$temp/accepted.csv") == 3 ]]
+[[ $(wc -l < "$temp/rejected.csv") == 4 ]]
+expect_failure jobs/csv-quality-check/job.groovy --param "inputFile=$PWD/testdata/municipalities.csv" \
+  --param "reportFile=$temp/quality.json" --param "validatedFile=$temp/accepted.csv" --param "invalidFile=$temp/rejected.csv" \
+  --param strictMode=true
+grep -q 'Rejected 3 records' "$temp/run.log"
+
+python3 - "$temp" <<'PY'
+from pathlib import Path
+import sys
+from zipfile import ZipFile
+root = Path(sys.argv[1])
+with ZipFile(root / 'tables.zip', 'w') as z:
+    z.writestr('municipalities.csv', 'id,name\n1001,Bern\n1002,Biel\n')
+    z.writestr('population.csv', 'id,population\n1001,150000\n1002,55000\n')
+PY
+run jobs/zip-csv-import/job.groovy --param "inputFile=$temp/tables.zip" \
+  --param "mergedFile=$temp/merged.csv" --param "reportFile=$temp/import.json"
+grep -qx '1002,Biel,55000' "$temp/merged.csv"
+run jobs/xtf-validation/job.groovy --param "inputFile=$PWD/testdata/valid.xtf" \
+  --param "validationFile=$temp/valid.txt" --work-dir "$temp/ili-valid"
+grep -q 'GRETL INTERLIS validation report' "$temp/valid.txt"
+expect_failure jobs/xtf-validation/job.groovy --param "inputFile=$PWD/testdata/invalid.xtf" \
+  --param "validationFile=$temp/invalid.txt" --work-dir "$temp/ili-invalid" --report "$temp/ili-invalid.json"
+grep -q 'VALIDATION_FAILED' "$temp/ili-invalid.json"
+echo 'Extended GRETL example jobs passed.'

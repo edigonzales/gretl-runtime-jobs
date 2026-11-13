@@ -1,0 +1,19 @@
+schemaVersion: 2
+id: xtf-validation
+name: INTERLIS-Transfer prüfen
+description: Validiert eine synthetische XTF-Datei gegen das lokale GRETL-Beispielmodell.
+runtime: gretl
+script: job.groovy
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+parameters:
+  - {name: inputFile, label: XTF-Datei, type: file, required: true, accept: [.xtf]}
+  - name: model
+    label: Modell
+    type: enum
+    default: GretlValidationExample
+    options:
+      - {value: GretlValidationExample, label: GRETL-Beispielmodell}
+outputs:
+  - {name: validation, label: Validierungsbericht, path: validation.txt, parameter: validationFile, optional: true}
