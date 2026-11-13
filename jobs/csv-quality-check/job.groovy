@@ -1,6 +1,7 @@
 import ch.ehi.basics.settings.Settings
 import ch.interlis.iom_j.csv.CsvReader
 import ch.interlis.iox.ObjectEvent
+import ch.interlis.iox.StartBasketEvent
 import groovy.json.JsonOutput
 import java.nio.file.Files
 
@@ -38,12 +39,15 @@ action('inspect') {
         Files.newBufferedWriter(accepted).withCloseable { valid ->
             valid.write(this.csv(columns))
             def event = reader.read()
-            event = reader.read()
+            while (event != null && !(event instanceof StartBasketEvent) && !(event instanceof ObjectEvent)) {
+                event = reader.read()
+            }
             def headers = reader.attributes?.toList()
             if (headers?.size() != columns.size() || (parameter('hasHeader') && headers != columns)) {
                 throw new IllegalArgumentException("Expected columns: ${columns.join(', ')}")
             }
-            while ((event = reader.read()) != null) {
+            if (!(event instanceof ObjectEvent)) event = reader.read()
+            for (; event != null; event = reader.read()) {
                 if (!(event instanceof ObjectEvent)) continue
                 def row = headers.collect { event.iomObject.getattrvalue(it) }
                 report.records++

@@ -49,6 +49,12 @@ assert (d['records'], d['blankValues'], d['duplicateKeys'], d['invalidRecords'])
 PY
 [[ $(wc -l < "$temp/accepted.csv") == 3 ]]
 [[ $(wc -l < "$temp/rejected.csv") == 4 ]]
+tail -n +2 testdata/municipalities.csv > "$temp/headerless.csv"
+run jobs/csv-quality-check/job.groovy --param "inputFile=$temp/headerless.csv" --param hasHeader=false \
+  --param "reportFile=$temp/headerless.json" --param "validatedFile=$temp/headerless-accepted.csv" \
+  --param "invalidFile=$temp/headerless-rejected.csv"
+cmp "$temp/quality.json" "$temp/headerless.json"
+cmp "$temp/accepted.csv" "$temp/headerless-accepted.csv"
 expect_failure jobs/csv-quality-check/job.groovy --param "inputFile=$PWD/testdata/municipalities.csv" \
   --param "reportFile=$temp/quality.json" --param "validatedFile=$temp/accepted.csv" --param "invalidFile=$temp/rejected.csv" \
   --param strictMode=true
