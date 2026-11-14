@@ -6,6 +6,7 @@ parameter('validatedFile', description: 'Validated CSV', type: 'path', required:
 parameter('reportFile', description: 'Review report', type: 'path', required: true)
 
 action('prepare') {
+    println 'J4 branch marker prepare'
     def input = parameter('inputFile')
     long records = Files.newBufferedReader(input).withCloseable { reader ->
         if (reader.readLine() != 'id,name') throw new IllegalArgumentException('Expected CSV header id,name')
