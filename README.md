@@ -46,3 +46,25 @@ verwendet genau diese Datei und den vom Reviewer angegebenen Hinweis.
 `GRETL_BIN` kann auf eine andere gebaute GRETL-6-Distribution zeigen.
 Für die Bereitstellung siehe die
 [Kubernetes Job Console](https://github.com/edigonzales/k8s-job-console).
+
+### Weitere Beispiele
+
+| Job | Eingabe | Ergebnis |
+| --- | --- | --- |
+| `csv-quality-check` | `testdata/municipalities.csv`, Trennzeichen, Berichtsjahr, Stichtag und Bemerkungen | Qualitätsbericht, gültige Zeilen und bei Bedarf beanstandete Zeilen |
+| `zip-csv-import` | ZIP mit `municipalities.csv` (`id,name`) und `population.csv` (`id,population`) | Verknüpfte Tabelle und Importbericht |
+| `xtf-validation` | `testdata/valid.xtf` oder `testdata/invalid.xtf` und lokales Modell | Validierungsbericht bei Erfolg, Runtime-Runbericht mit Diagnose bei Fehler |
+
+`./scripts/test.sh` enthält reproduzierbare direkte CLI-Aufrufe für alle
+Beispiele und erzeugt das ZIP als kleine synthetische Testdatei. Beim
+CSV-Qualitätscheck erzeugt der strikte Modus zuerst den Qualitätsbericht und
+beendet danach die Ausführung mit einem Fehler, falls Zeilen beanstandet wurden.
+Modell und XTF-Fixtures stammen aus dem GRETL-Runtime-Beispiel
+`ili-validator` an der in der CI gepinnten Revision.
+
+Im [Jenkins-Labor](https://github.com/edigonzales/gretl-jenkins-lab) sind die
+öffentlichen Beispiele nach dem Katalog-Deployment als `gretl-<id>` verfügbar.
+Wähle **Build with Parameters**, lade die Beispieldatei hoch und öffne die
+Ergebnisse unter **Build Artifacts**. Bei `gretl-csv-publication` liest der
+Reviewer vor der Freigabe `prepare/review.json` und erfasst den Hinweis über
+**Paused for Input**. Das publizierte Ergebnis liegt unter `publish/`.

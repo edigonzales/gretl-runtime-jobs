@@ -1,0 +1,14 @@
+schemaVersion: 2
+id: zip-csv-import
+name: Gemeindedaten aus ZIP zusammenführen
+description: Verknüpft Gemeindestammdaten mit Bevölkerungszahlen aus zwei CSV-Tabellen.
+runtime: gretl
+script: job.groovy
+access:
+  view: {groups: [console-viewers]}
+  run: {groups: [console-operators]}
+parameters:
+  - {name: inputFile, label: ZIP-Archiv, type: file, required: true, accept: [.zip]}
+outputs:
+  - {name: merged, label: Zusammengeführte Daten, path: municipalities.csv, parameter: mergedFile}
+  - {name: report, label: Importbericht, path: import.json, parameter: reportFile}
