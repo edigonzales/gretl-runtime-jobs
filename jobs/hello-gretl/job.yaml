@@ -1,6 +1,6 @@
 schemaVersion: 2
 id: hello-gretl
-name: Hello GRETL
+name: Hello GRETL (changed contract)
 description: Gibt eine Nachricht mehrfach aus.
 runtime: gretl
 script: job.groovy
